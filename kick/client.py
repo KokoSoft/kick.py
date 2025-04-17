@@ -402,6 +402,15 @@ class Client:
             The message delete event data
         """
 
+    async def on_pinned_message_delete(self) -> None:
+        """
+        |coro|
+
+        on_pinned_message_delete is an event that can be overriden with the `Client.event` decorator or with a subclass.
+        This is called when a pinned message is deleted over the websocket
+
+        """
+
     async def on_payload_receive(self, event: str, payload: dict) -> None:
         """
         |coro|

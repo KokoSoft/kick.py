@@ -39,6 +39,8 @@ class PusherWebSocket:
             case "App\\Events\\MessageDeletedEvent":
                 msg = MessageDeletedEventData(data=data, http=self.http)
                 self.http.client.dispatch("message_delete", msg)
+            case "App\\Events\\PinnedMessageDeletedEvent":
+                self.http.client.dispatch("pinned_message_delete")
             case "App\\Events\\StreamerIsLive":
                 livestream = PartialLivestream(data=data, http=self.http)
                 self.http.client.dispatch("livestream_start", livestream)

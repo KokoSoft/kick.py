@@ -9,7 +9,7 @@ from .chatroom import Chatroom, PartialChatroom
 from .chatter import PartialChatter
 from .http import HTTPClient
 from .livestream import PartialLivestream
-from .message import Message
+from .message import Message, MessageDeletedEventData
 from .users import ClientUser, PartialUser, User, StreamInfo, DestinationInfo
 from .categories import CategorySearchResult
 from .utils import MISSING, decorator, setup_logging
@@ -387,6 +387,19 @@ class Client:
         -----------
         message: `Message`
             The message that was received
+        """
+
+    async def on_message_delete(self, delete_event: MessageDeletedEventData) -> None:
+        """
+        |coro|
+
+        on_message_delete is an event that can be overriden with the `Client.event` decorator or with a subclass.
+        This is called when a message is deleted over the websocket
+
+        Parameters
+        -----------
+        delete_event: `MessageDeletedEventData`
+            The message delete event data
         """
 
     async def on_payload_receive(self, event: str, payload: dict) -> None:

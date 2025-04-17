@@ -9,9 +9,9 @@ from .utils import cached_property
 
 if TYPE_CHECKING:
     from .chatroom import Chatroom, PartialChatroom
-    from .types.message import AuthorPayload, MessagePayload, ReplyMetaData
+    from .types.message import AuthorPayload, MessagePayload, MessageDeletedPayload, ReplyMetaData
 
-__all__ = ("Author", "Message", "PartialMessage")
+__all__ = ("Author", "Message", "PartialMessage", "MessageDeletedEventData")
 
 
 class Author(HTTPDataclass["AuthorPayload"]):
@@ -245,3 +245,58 @@ class Message(HTTPDataclass["MessagePayload"]):
 
     def __repr__(self) -> str:
         return f"<Message id={self.id!r} chatroom={self.chatroom_id!r} author={self.author!r}>"
+
+class MessageDeletedEventData(HTTPDataclass["MessageDeletedPayload"]):
+    """
+    Represents a delete message event
+
+    Attributes
+    -----------
+    id: str
+        the event id
+    message_id: str
+        the message's id
+    ai_moderated: bool
+        If the message was moderated by ai
+    violated_rules: [?]
+        the list of violated rules
+    chatroom: `Chatroom` | None
+        The chatroom the message was sent in.
+    """
+    @property
+    def id(self) -> str:
+        """
+        the event id
+        """
+
+        return self._data["id"]
+
+    @property
+    def message_id(self) -> str:
+        """
+        the message's id
+        """
+
+        return self._data["message"]["id"]
+
+    @cached_property
+    def ai_moderated(self) -> bool:
+        """
+        If the message was moderated by ai
+        """
+
+        return bool(self._data.get("aiModerated"))
+
+    @property
+    def violated_rules(self) -> list:
+        """
+        the list of violated rules
+        """
+
+        return self._data.get("violatedRules")
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, self.__class__) and other.id == self.id
+
+    def __repr__(self) -> str:
+        return f"<MessageDeletedEventData id={self.id!r} message_id={self.message_id!r}>"

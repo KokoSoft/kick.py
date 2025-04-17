@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from aiohttp import ClientWebSocketResponse as WebSocketResponse
 import logging
 from .livestream import PartialLivestream
-from .message import Message
+from .message import Message, MessageDeletedEventData
 
 if TYPE_CHECKING:
     from .http import HTTPClient
@@ -36,6 +36,9 @@ class PusherWebSocket:
             case "App\\Events\\ChatMessageEvent":
                 msg = Message(data=data, http=self.http)
                 self.http.client.dispatch("message", msg)
+            case "App\\Events\\MessageDeletedEvent":
+                msg = MessageDeletedEventData(data=data, http=self.http)
+                self.http.client.dispatch("message_delete", msg)
             case "App\\Events\\StreamerIsLive":
                 livestream = PartialLivestream(data=data, http=self.http)
                 self.http.client.dispatch("livestream_start", livestream)

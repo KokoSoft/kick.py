@@ -28,6 +28,11 @@ class BaseMessagePayload(TypedDict):
 class NormalMessagePayload(BaseMessagePayload):
     type: Literal["message"]
 
+class MessageDeletedPayload(TypedDict):
+    id: str
+    message_id : str
+    ai_moderated: bool
+    violated_rules: list  # NEED TO FIGURE THIS OUT
 
 class ReplyOriginalSender(TypedDict):
     id: str | int

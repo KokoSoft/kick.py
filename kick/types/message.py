@@ -53,6 +53,11 @@ class ReplyMessagePayload(BaseMessagePayload):
     type: Literal["reply"]
     metadata: ReplyMetaData
 
+class MessagePinPayload(TypedDict):
+    message: BaseMessagePayload
+    duration : int
+    pinned_by: AuthorPayload
+
 
 MessagePayload = NormalMessagePayload | ReplyMessagePayload
 

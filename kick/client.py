@@ -9,7 +9,7 @@ from .chatroom import Chatroom, PartialChatroom
 from .chatter import PartialChatter
 from .http import HTTPClient
 from .livestream import PartialLivestream
-from .message import Message, MessageDeletedEventData
+from .message import Message, MessageDeletedEventData, PinnedMessage
 from .users import ClientUser, PartialUser, User, StreamInfo, DestinationInfo
 from .categories import CategorySearchResult
 from .utils import MISSING, decorator, setup_logging
@@ -399,6 +399,19 @@ class Client:
         Parameters
         -----------
         delete_event: `MessageDeletedEventData`
+            The message delete event data
+        """
+
+    async def on_pin_message(self, pinned_message : PinnedMessage) -> None:
+        """
+        |coro|
+
+        on_pin_message is an event that can be overriden with the `Client.event` decorator or with a subclass.
+        This is called when a message is pinned over the websocket
+
+        Parameters
+        -----------
+        pinned_message: `PinnedMessage`
             The message delete event data
         """
 

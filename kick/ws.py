@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from aiohttp import ClientWebSocketResponse as WebSocketResponse
 import logging
 from .livestream import PartialLivestream
-from .message import Message, MessageDeletedEventData
+from .message import Message, MessageDeletedEventData, PinnedMessage
 
 if TYPE_CHECKING:
     from .http import HTTPClient
@@ -39,6 +39,9 @@ class PusherWebSocket:
             case "App\\Events\\MessageDeletedEvent":
                 msg = MessageDeletedEventData(data=data, http=self.http)
                 self.http.client.dispatch("message_delete", msg)
+            case "App\\Events\\PinnedMessageCreatedEvent":
+                msg = PinnedMessage(data=data, http=self.http)
+                self.http.client.dispatch("pin_message", msg)
             case "App\\Events\\PinnedMessageDeletedEvent":
                 self.http.client.dispatch("pinned_message_delete")
             case "App\\Events\\StreamerIsLive":

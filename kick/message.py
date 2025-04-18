@@ -9,9 +9,9 @@ from .utils import cached_property
 
 if TYPE_CHECKING:
     from .chatroom import Chatroom, PartialChatroom
-    from .types.message import AuthorPayload, MessagePayload, MessageDeletedPayload, ReplyMetaData
+    from .types.message import AuthorPayload, MessagePayload, MessageDeletedPayload, MessagePinPayload, ReplyMetaData
 
-__all__ = ("Author", "Message", "PartialMessage", "MessageDeletedEventData")
+__all__ = ("Author", "Message", "PartialMessage", "MessageDeletedEventData", "PinnedMessage")
 
 
 class Author(HTTPDataclass["AuthorPayload"]):
@@ -300,3 +300,42 @@ class MessageDeletedEventData(HTTPDataclass["MessageDeletedPayload"]):
 
     def __repr__(self) -> str:
         return f"<MessageDeletedEventData id={self.id!r} message_id={self.message_id!r}>"
+
+class PinnedMessage(HTTPDataclass["MessagePinPayload"]):
+    """
+    Represents a pin message event
+
+    Attributes
+    -----------
+    message: Message
+        Pinned message
+    duration: int
+        Duration of message pin
+    pinned_by: `Author`
+        Who pin the message
+    """
+
+    @cached_property
+    def message(self) -> Message:
+        """
+        Pinned message
+        """
+        return Message(data=self._data["message"], http=self.http)
+
+    @cached_property
+    def duration(self) -> int:
+        """
+        Duration of message pin
+        """
+
+        return int(self._data["duration"])
+
+    @cached_property
+    def pinned_by(self) -> Author:
+        """
+        Who pin the message
+        """
+        return Author(data=self._data["pinnedBy"], http=self.http)
+
+    def __repr__(self) -> str:
+        return f"<PinnedMessage message={self.message!r} duration={self.duration!r} pinned_by={self.pinned_by!r}>"

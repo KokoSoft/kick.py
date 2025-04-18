@@ -5,15 +5,16 @@ from typing_extensions import TypedDict
 from .all import StatusPayload
 
 
+class PartialAuthorPayload(TypedDict):
+    id: int
+    username: str
+    slug: str
+
 class AuthorIdentity(TypedDict):
     color: str
     badges: list  # NEED TO FIGURE THIS OUT
 
-
-class AuthorPayload(TypedDict):
-    id: int
-    username: str
-    slug: str
+class AuthorPayload(PartialAuthorPayload):
     identity: AuthorIdentity
 
 

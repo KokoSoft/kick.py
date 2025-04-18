@@ -9,14 +9,14 @@ from .utils import cached_property
 
 if TYPE_CHECKING:
     from .chatroom import Chatroom, PartialChatroom
-    from .types.message import AuthorPayload, MessagePayload, MessageDeletedPayload, MessagePinPayload, ReplyMetaData
+    from .types.message import PartialAuthorPayload, AuthorPayload, MessagePayload, MessageDeletedPayload, MessagePinPayload, ReplyMetaData
 
-__all__ = ("Author", "Message", "PartialMessage", "MessageDeletedEventData", "PinnedMessage")
+__all__ = ("PartialAuthor", "Author", "Message", "PartialMessage", "MessageDeletedEventData", "PinnedMessage")
 
 
-class Author(HTTPDataclass["AuthorPayload"]):
+class PartialAuthor(HTTPDataclass["PartialAuthorPayload"]):
     """
-    Represents the author of a message on kick
+    Represents the partial author of a message on kick
 
     Attributes
     -----------
@@ -26,10 +26,6 @@ class Author(HTTPDataclass["AuthorPayload"]):
         The author's slug
     username: str
         The author's username
-    color: str
-        The authors... color?
-    badges: list
-        Unknown
     """
 
     @property
@@ -55,19 +51,6 @@ class Author(HTTPDataclass["AuthorPayload"]):
         """
 
         return self._data["username"]
-
-    @property
-    def color(self) -> str:
-        """
-        The authors... color?
-        """
-
-        return self._data["identity"]["color"]
-
-    @property
-    def badges(self) -> list:
-        """THIS IS RAW DATA"""
-        return self._data["identity"]["badges"]
 
     async def to_user(self) -> User:
         """
@@ -95,6 +78,40 @@ class Author(HTTPDataclass["AuthorPayload"]):
 
     def __str__(self) -> str:
         return self.slug
+
+    def __repr__(self) -> str:
+        return f"<PartialAuthor id={self.id!r} slug={self.slug!r}>"
+
+class Author(PartialAuthor, HTTPDataclass["AuthorPayload"]):
+    """
+    Represents the author of a message on kick
+
+    Attributes
+    -----------
+    id: int
+        The author's id
+    slug: str
+        The author's slug
+    username: str
+        The author's username
+    color: str
+        The authors... color?
+    badges: list
+        Unknown
+    """
+
+    @property
+    def color(self) -> str:
+        """
+        The authors... color?
+        """
+
+        return self._data["identity"]["color"]
+
+    @property
+    def badges(self) -> list:
+        """THIS IS RAW DATA"""
+        return self._data["identity"]["badges"]
 
     def __repr__(self) -> str:
         return f"<Author id={self.id!r} slug={self.slug!r}>"

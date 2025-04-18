@@ -80,3 +80,15 @@ class FetchMessagesPayload(TypedDict):
 
 class V1MessageSentPayload(StatusPayload):
     ...
+
+class UserBannedPayload(TypedDict):
+    id : str
+    user : PartialAuthorPayload
+    banned_by : PartialAuthorPayload
+    permanent : bool
+
+class UserUnbannedPayload(TypedDict):
+    id : str
+    user : PartialAuthorPayload
+    banned_by : PartialAuthorPayload
+    permanent : bool

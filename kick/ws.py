@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from aiohttp import ClientWebSocketResponse as WebSocketResponse
 import logging
 from .livestream import PartialLivestream
-from .message import Message, MessageDeletedEventData, PinnedMessage
+from .message import Message, MessageDeletedEventData, PinnedMessage, UserBannedEventData, UserUnbannedEventData
 
 if TYPE_CHECKING:
     from .http import HTTPClient
@@ -44,6 +44,12 @@ class PusherWebSocket:
                 self.http.client.dispatch("pin_message", msg)
             case "App\\Events\\PinnedMessageDeletedEvent":
                 self.http.client.dispatch("pinned_message_delete")
+            case "App\\Events\\UserBannedEvent":
+                event_data = UserBannedEventData(data=data, http=self.http)
+                self.http.client.dispatch("user_banned", event_data)
+            case "App\\Events\\UserUnbannedEvent":
+                event_data = UserUnbannedEventData(data=data, http=self.http)
+                self.http.client.dispatch("user_unbanned", event_data)
             case "App\\Events\\StreamerIsLive":
                 livestream = PartialLivestream(data=data, http=self.http)
                 self.http.client.dispatch("livestream_start", livestream)

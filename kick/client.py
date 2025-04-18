@@ -9,7 +9,7 @@ from .chatroom import Chatroom, PartialChatroom
 from .chatter import PartialChatter
 from .http import HTTPClient
 from .livestream import PartialLivestream
-from .message import Message, MessageDeletedEventData, PinnedMessage
+from .message import Message, MessageDeletedEventData, PinnedMessage, UserBannedEventData, UserUnbannedEventData
 from .users import ClientUser, PartialUser, User, StreamInfo, DestinationInfo
 from .categories import CategorySearchResult
 from .utils import MISSING, decorator, setup_logging
@@ -421,7 +421,32 @@ class Client:
 
         on_pinned_message_delete is an event that can be overriden with the `Client.event` decorator or with a subclass.
         This is called when a pinned message is deleted over the websocket
+        """
 
+    async def on_user_banned(self, event_data : UserBannedEventData) -> None:
+        """
+        |coro|
+
+        on_user_banned is an event that can be overriden with the `Client.event` decorator or with a subclass.
+        This is called when a user is banned on chat
+
+        Parameters
+        -----------
+        event_data: `UserBannedEventData`
+            The user banned event data
+        """
+
+    async def on_user_unbanned(self, event_data : UserUnbannedEventData) -> None:
+        """
+        |coro|
+
+        on_user_unbanned is an event that can be overriden with the `Client.event` decorator or with a subclass.
+        This is called when a user is banned on chat
+
+        Parameters
+        -----------
+        event_data: `UserUnbannedEventData`
+            The user unbanned event data
         """
 
     async def on_payload_receive(self, event: str, payload: dict) -> None:

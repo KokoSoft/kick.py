@@ -9,9 +9,9 @@ from .utils import cached_property
 
 if TYPE_CHECKING:
     from .chatroom import Chatroom, PartialChatroom
-    from .types.message import PartialAuthorPayload, AuthorPayload, MessagePayload, MessageDeletedPayload, MessagePinPayload, ReplyMetaData
+    from .types.message import PartialAuthorPayload, AuthorPayload, MessagePayload, MessageDeletedPayload, MessagePinPayload, ReplyMetaData, UserBannedPayload, UserUnbannedPayload
 
-__all__ = ("PartialAuthor", "Author", "Message", "PartialMessage", "MessageDeletedEventData", "PinnedMessage")
+__all__ = ("PartialAuthor", "Author", "Message", "PartialMessage", "MessageDeletedEventData", "PinnedMessage", "UserBannedEventData", "UserUnbannedEventData")
 
 
 class PartialAuthor(HTTPDataclass["PartialAuthorPayload"]):
@@ -356,3 +356,113 @@ class PinnedMessage(HTTPDataclass["MessagePinPayload"]):
 
     def __repr__(self) -> str:
         return f"<PinnedMessage message={self.message!r} duration={self.duration!r} pinned_by={self.pinned_by!r}>"
+
+
+class UserBannedEventData(HTTPDataclass["UserBannedPayload"]):
+    """
+    Represents a user banned event data
+
+    Attributes
+    -----------
+    id: str
+        the event's id
+    user: `PartialAuthor`
+        The banned user
+    banned_by: `PartialAuthor`
+        Member who banned the user
+    is_permanent: bool
+        If ban is permanent
+    """
+
+    @property
+    def id(self) -> str:
+        """
+        the message's id
+        """
+
+        return self._data["id"]
+
+    @cached_property
+    def is_permanent(self) -> bool:
+        """
+        If ban is permanent
+        """
+
+        return bool(self._data.get("permanent"))
+
+    @cached_property
+    def user(self) -> Author:
+        """
+        The banned user
+        """
+
+        return PartialAuthor(data=self._data["user"], http=self.http)
+
+    @cached_property
+    def banned_by(self) -> Author:
+        """
+        Member who banned the user
+        """
+
+        return PartialAuthor(data=self._data["banned_by"], http=self.http)
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, self.__class__) and other.id == self.id
+
+    def __repr__(self) -> str:
+        return f"<UserBannedEventData banned={self.user!r} by={self.banned_by!r}>"
+
+
+class UserUnbannedEventData(HTTPDataclass["UserUnbannedPayload"]):
+    """
+    Represents a user unbanned event data
+
+    Attributes
+    -----------
+    id: str
+        the event's id
+    user: `PartialAuthor`
+        The unbanned user
+    unbanned_by: `PartialAuthor`
+        Member who banned the user / Member who unbanned the user ??
+    is_permanent: bool
+        If ban was permanent / If unban is permanent ??
+    """
+
+    @property
+    def id(self) -> str:
+        """
+        the message's id
+        """
+
+        return self._data["id"]
+
+    @cached_property
+    def is_permanent(self) -> bool:
+        """
+        If ban was permanent / If unban is permanent ??
+        """
+
+        return bool(self._data.get("permanent"))
+
+    @cached_property
+    def user(self) -> Author:
+        """
+        The banned user
+        """
+
+        return PartialAuthor(data=self._data["user"], http=self.http)
+
+    @cached_property
+    def unbanned_by(self) -> Author:
+        """
+        Member who banned the user / Member who unbanned the user ??
+        """
+
+        return PartialAuthor(data=self._data["unbanned_by"], http=self.http)
+
+    def __eq__(self, other: object) -> bool:
+        return isinstance(other, self.__class__) and other.id == self.id
+
+    def __repr__(self) -> str:
+        return f"<UserUnbannedEventData unbanned={self.user!r} by={self.unbanned_by!r}>"
